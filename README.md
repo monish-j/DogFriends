@@ -5,8 +5,6 @@ Welcome to the DogFriends project! This project is designed to help you find and
 ## Features
 
 - Search for dog breeds
-- View detailed information about each breed
-- Save your favorite breeds
 
 ## Getting Started
 
