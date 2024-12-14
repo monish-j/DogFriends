@@ -1,50 +1,44 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import CardList from '../components/CardList';
 import SearchBox from '../components/SearchBox';
 import Scroll from '../components/Scroll';
 import ErrorBoundry from '../components/ErrorBoundry';
 import './App.css';
 
-class App extends Component {
-  constructor() {
-    super();
-    this.state = {
-      dogs: [],
-      searchfield: ''
-    };
-  }
 
-  componentDidMount() {
+
+const App = () => {
+  const [dogs, setDogs] = useState([]);
+  const [searchfield, setSearchfield] = useState('');
+
+  useEffect(() => {
     fetch('https://dog.ceo/api/breeds/image/random/10')
       .then(response => response.json())
-      .then(data => this.setState({ dogs: data.message }));
+      .then(data => setDogs(data.message));
+  }, []);
+
+  const onSearchChange = (event) => {
+    setSearchfield(event.target.value);
   }
 
-  onSearchChange = (event) => {
-    this.setState({ searchfield: event.target.value });
-  }
+  const filteredDogs = dogs.filter(dog => {
+    const breed = dog.split('/')[4];
+    return breed.toLowerCase().includes(searchfield.toLowerCase());
+  });
 
-  render() {
-    const { dogs, searchfield } = this.state;
-    const filteredDogs = dogs.filter(dog => {
-      const breed = dog.split('/')[4];
-      return breed.toLowerCase().includes(searchfield.toLowerCase());
-    });
-
-    return !dogs.length ?
-      <h1>Loading</h1> :
-      (
-        <div className="tc">
-          <h1 className='f1'>DogFriends</h1>
-          <SearchBox searchChange={this.onSearchChange} />
-          <Scroll>
-            <ErrorBoundry>
-              <CardList dogs={filteredDogs} />
-            </ErrorBoundry>
-          </Scroll>
-        </div>
-      );
-  }
+  return !dogs.length ?
+    <h1>Loading</h1> :
+    (
+      <div className="tc">
+        <h1 className='f1'>DogFriends</h1>
+        <SearchBox searchChange={onSearchChange} />
+        <Scroll>
+          <ErrorBoundry>
+            <CardList dogs={filteredDogs} />
+          </ErrorBoundry>
+        </Scroll>
+      </div>
+    );
 }
 
 export default App;
